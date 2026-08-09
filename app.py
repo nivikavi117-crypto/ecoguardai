@@ -1,6 +1,7 @@
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
+from streamlit_geolocation import streamlit_geolocation
 import plotly.graph_objects as go
 from PIL import Image, ImageDraw, ImageFont
 import random
@@ -104,6 +105,10 @@ input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
+location = streamlit_geolocation()
+if location and location['latitude'] is not None:
+    base_lat = location['latitude']
+    base_lon = location['longitude']
 
 # Run Core Analytics Logic
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
