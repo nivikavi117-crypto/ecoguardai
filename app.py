@@ -1,3 +1,4 @@
+from streamlit_js_eval import get_geolocation
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
@@ -104,8 +105,8 @@ st.sidebar.markdown("### Live Telemetry Control")
 input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
-selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
-import requests; geo_data = requests.get('https://ipapi.co', timeout=3).json() if requests.get('https://ipapi.co', timeout=3).status_code == 200 else {}; base_lat, base_lon = geo_data.get('latitude', 11.0168), geo_data.get('longitude', 76.9558)
+loc = get_geolocation()
+base_lat, base_lon = (loc['coords']['latitude'], loc['coords']['longitude']) if loc else (11.0181, 76.9737)
 
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
