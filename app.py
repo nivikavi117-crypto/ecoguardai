@@ -105,8 +105,7 @@ input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
-import requests; geo_data = requests.get('https://ipapi.co', timeout=3).json() if requests.get('https://ipapi.co', timeout=3).status_code == 200 else {}; base_lat, base_lon = geo_data.get('latitude', 11.0168), geo_data.get('longitude', 76.9558)
-# Run Core Analytics Logic
+import requests; geo_data = requests.get('https://ipapi.co', timeout=3).json() if requests.get('https://ipapi.co', timeout=3).status_code == 200 else {}; base_lat, base_lon = geo_data
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
 
@@ -120,6 +119,13 @@ m = folium.Map(location=[base_lat, base_lon], zoom_start=14, tiles="CartoDB dark
 
 # Add Static Village Point
 folium.Marker(location=village_coords, popup="Annamalai Village Grid", icon=folium.Icon(color='green', icon='home')).add_to(m)
+        # --- Extra Safest Route 1 (Teal Color) ---
+        alt_safe_path_1 = [[11.0180, 76.9700], [11.0250, 76.9780], [11.0250, 76.9850]]
+        folium.PolyLine(alt_safe_path_1, color="#00ffcc", weight=5, opacity=0.8, tooltip="Alternative Safe Route 1").add_to(m)
+
+        # --- Extra Safest Route 2 (Light Green Color) ---
+        alt_safe_path_2 = [[11.0180, 76.9700], [11.0150, 76.9750], [11.0250, 76.9850]]
+        folium.PolyLine(alt_safe_path_2, color="#76ff03", weight=5, opacity=0.8, tooltip="Alternative Safe Route 2").add_to(m)
 
 # Dynamic Fire Heat/Danger Radius Generation
 if fire_risk_score > 50:
