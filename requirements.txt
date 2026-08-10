@@ -4,3 +4,4 @@ streamlit-folium
 plotly
 pillow
 streamlit-geolocation
+streamlit-js-eval
