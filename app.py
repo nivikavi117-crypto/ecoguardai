@@ -105,10 +105,16 @@ input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
-location = streamlit_geolocation()
-if location and location['latitude'] is not None:
-    base_lat = location['latitude']
-    base_lon = location['longitude']
+        # Automatic Network IP location lookup switch (Chrome sensor crash bypass)
+        import requests
+        try:
+            geo_data = requests.get('https://ipapi.co').json()
+            if 'latitude' in geo_data and geo_data['latitude'] is not None:
+                base_lat = geo_data['latitude']
+                base_lon = geo_data['longitude']
+        except Exception:
+            pass
+
 
 # Run Core Analytics Logic
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
