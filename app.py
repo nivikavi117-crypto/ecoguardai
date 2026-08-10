@@ -105,6 +105,8 @@ st.sidebar.markdown("### Live Telemetry Control")
 input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
+selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
+
 loc = get_geolocation()
 base_lat, base_lon = (loc['coords']['latitude'], loc['coords']['longitude']) if loc else (11.0181, 76.9737)
 
