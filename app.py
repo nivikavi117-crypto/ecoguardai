@@ -119,13 +119,13 @@ m = folium.Map(location=[base_lat, base_lon], zoom_start=14, tiles="CartoDB dark
 
 # Add Static Village Point
 folium.Marker(location=village_coords, popup="Annamalai Village Grid", icon=folium.Icon(color='green', icon='home')).add_to(m)
-        # --- Extra Safest Route 1 (Teal Color) ---
-        alt_safe_path_1 = [[11.0180, 76.9700], [11.0250, 76.9780], [11.0250, 76.9850]]
-        folium.PolyLine(alt_safe_path_1, color="#00ffcc", weight=5, opacity=0.8, tooltip="Alternative Safe Route 1").add_to(m)
+# --- Extra Safest Route 1 (Teal Color) ---
+alt_safe_path_1 = [[11.0180, 76.9700], [11.0250, 76.9780], [11.0250, 76.9850]]
+folium.PolyLine(alt_safe_path_1, color="#00ffcc", weight=5, opacity=0.8, tooltip="Alternative Safe Route 1").add_to(m)
 
-        # --- Extra Safest Route 2 (Light Green Color) ---
-        alt_safe_path_2 = [[11.0180, 76.9700], [11.0150, 76.9750], [11.0250, 76.9850]]
-        folium.PolyLine(alt_safe_path_2, color="#76ff03", weight=5, opacity=0.8, tooltip="Alternative Safe Route 2").add_to(m)
+# --- Extra Safest Route 2 (Light Green Color) ---
+alt_safe_path_2 = [[11.0180, 76.9700], [11.0150, 76.9750], [11.0250, 76.9850]]
+folium.PolyLine(alt_safe_path_2, color="#76ff03", weight=5, opacity=0.8, tooltip="Alternative Safe Route 2").add_to(m)
 
 # Dynamic Fire Heat/Danger Radius Generation
 if fire_risk_score > 50:
@@ -133,7 +133,7 @@ if fire_risk_score > 50:
 
 # Dynamic Wild Animal Threat Position Generation
 if selected_feed != "No Animal":
-    folium.Marker(location=[11.0190, 76.9780], popup=f"ALERT: {ai_label}", icon=folium.Icon(color='orange', icon='warning')).add_to(m)
+  folium.Marker(location=[11.0190, 76.9780], popup=f"ALERT: {ai_label}", icon=folium.Icon(color='orange', icon='warning')).add_to(m)
 
 # Dynamic Routing Logic Engine Matrix Lines
 standard_route = [[11.0120, 76.9650], danger_coords, village_coords]
