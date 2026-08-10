@@ -116,6 +116,7 @@ selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Ele
             pass
 
 
+
 # Run Core Analytics Logic
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
