@@ -105,7 +105,17 @@ input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
-import requests; geo_data = requests.get('https://ipapi.co').json(); base_lat, base_lon = geo_data.get('latitude', 11.0168), geo_data.get('longitude', 76.9558)
+        import requests
+        try:
+            res = requests.get('https://ipapi.co', timeout=3)
+            if res.status_code == 200:
+                geo_data = res.json()
+                base_lat = geo_data.get('latitude', 11.0168)
+                base_lon = geo_data.get('longitude', 76.9558)
+            else:
+                base_lat, base_lon = 11.0168, 76.9558
+        except Exception:
+                base_lat, base_lon = 11.0168, 76.9558
 # Run Core Analytics Logic
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
