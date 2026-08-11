@@ -105,14 +105,12 @@ st.sidebar.markdown("### Live Telemetry Control")
 input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
-    import requests
+import requests
     try:
         geo_data = requests.get('https://ipapi.co', timeout=3).json()
         base_lat, base_lon = geo_data.get('latitude', 11.0181), geo_data.get('longitude', 76.9737)
     except:
         base_lat, base_lon = 11.0181, 76.9737
-
-base_lat, base_lon = (loc['coords']['latitude'], loc['coords']['longitude']) if loc else (11.0181, 76.9737)
 
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
