@@ -105,6 +105,7 @@ st.sidebar.markdown("### Live Telemetry Control")
 input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
+selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
 import requests
 try:
     geo_data = requests.get('https://ipapi.co', timeout=3).json()
