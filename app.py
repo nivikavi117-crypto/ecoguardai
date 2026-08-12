@@ -90,12 +90,10 @@ def send_emergency_sms(alert_type, details, location="Grid 4B [11.0181, 76.9737]
 # --- APP LAYOUT & PRESENTATION LAYER ---
 
 st.title("🌲 EcoGuard AI: Forest Safety & Disaster Prediction")
-st.markdown(
-    "## 🌲 EcoGuard AI"
-)
+st.markdown(...)
 
 # Sidebar Application Selector Mode Switch
-view_mode = st"## 🌲 EcoGuard AI".("Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
+view_mode = st("## 🌲 EcoGuard AI").("Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
 
 # Simulated Environment Coordinates (Western Ghats, India Base Location)
 base_lat, base_lon = 11.0181, 76.9737
