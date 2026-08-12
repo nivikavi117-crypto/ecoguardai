@@ -481,7 +481,6 @@ fire_score, fire_risk = calculate_fire_risk(
 # ============================================================
 # SIDEBAR
 # ============================================================
-
     st.markdown("---")
 
     st.markdown(
@@ -549,21 +548,6 @@ fire_score, fire_risk = calculate_fire_risk(
         )
 
     st.markdown("---")
-
-    st.markdown(
-        "### 🐾 Animal Detection"
-    )
-
-    animal_status = st.selectbox(
-        "Simulate Camera Feed",
-        [
-            "No Animal",
-            "Elephant",
-            "Leopard",
-            "Wild Boar",
-            "Deer"
-        ]
-    )
 
     st.markdown("---")
 
