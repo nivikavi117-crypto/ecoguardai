@@ -547,9 +547,9 @@ else:
             "N/A"
         )
 
-    st.markdown("---")
+st.markdown("---")
 
-    st.markdown("---")
+st.markdown("---")
 
 if st.button(
         "🔄 Refresh Location & Weather",
