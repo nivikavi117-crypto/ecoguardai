@@ -250,7 +250,7 @@ if base_lat is None or base_lon is None:
 # GPS → CITY / DISTRICT / STATE
 # ============================================================
 
-@def get_location_name(latitude, longitude):
+def get_location_name(latitude, longitude):
 
     try:
         url = "https://nominatim.openstreetmap.org/reverse"
