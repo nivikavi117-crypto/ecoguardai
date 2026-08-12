@@ -483,7 +483,7 @@ fire_score, fire_risk = calculate_fire_risk(
 # ===========================================================
 st.markdown("---")
 
-    st.markdown(
+st.markdown(
         "### 📍 Current Location"
     )
 
