@@ -102,11 +102,9 @@ danger_coords = [11.0150, 76.9700]
 
 # Global State Variables Simulation via sliders
 st.sidebar.markdown("### Live Telemetry Control")
-input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
-input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
-input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
-selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
-
+live_temp = temperature if temperature is not None else 0[span_0](start_span)[span_0](end_span)
+live_hum = humidity if humidity is not None else 0[span_1](start_span)[span_1](end_span)
+live_wind = wind_speed if wind_speed is not None else 0[span_2](start_span)[span_2](end_span)
 import requests
 import folium
 from streamlit_folium import st_folium
