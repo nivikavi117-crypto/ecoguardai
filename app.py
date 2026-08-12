@@ -107,93 +107,75 @@ input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
 import streamlit as st
-import streamlit.components.v1 as components
 import requests
+import folium
+from streamlit_folium import st_folium
+from streamlit_geolocation import streamlit_geolocation
+
+
+# ============================================================
+# PAGE CONFIGURATION
+# ============================================================
+
+st.set_page_config(
+    page_title="EcoGuard AI",
+    page_icon="🌲",
+    layout="wide"
+)
+
 
 # ============================================================
 # GET CURRENT DEVICE LOCATION
 # ============================================================
 
-location_html = """
-<script>
-navigator.geolocation.getCurrentPosition(
-    function(position) {
-
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        const data = {
-            lat: lat,
-            lon: lon
-        };
-
-        window.parent.postMessage(
-            {
-                type: "streamlit:setComponentValue",
-                value: data
-            },
-            "*"
-        );
-    },
-
-    function(error) {
-        console.log("Location error:", error);
-    },
-
-    {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-    }
-);
-</script>
-"""
-
-components.html(location_html, height=0)
+location = streamlit_geolocation()
 
 
 # ============================================================
-# LOCATION DATA
+# CHECK GPS LOCATION
 # ============================================================
 
-if "gps_data" not in st.session_state:
-    st.session_state.gps_data = {
-        "lat": None,
-        "lon": None
+if (
+    location
+    and location.get("latitude") is not None
+    and location.get("longitude") is not None
+):
+
+    # Current device GPS
+    base_lat = float(location["latitude"])
+    base_lon = float(location["longitude"])
+
+    # Save GPS data
+    st.session_state["gps_data"] = {
+        "lat": base_lat,
+        "lon": base_lon
     }
 
-
-# ============================================================
-# USE CURRENT GPS LOCATION
-# ============================================================
-
-# If GPS is available, use it
-if st.session_state.gps_data["lat"] is not None:
-
-    base_lat = st.session_state.gps_data["lat"]
-    base_lon = st.session_state.gps_data["lon"]
+    gps_available = True
 
 else:
 
-    # Temporary fallback only when GPS is not available
-    base_lat = 11.0181
-    base_lon = 76.9558
+    gps_available = False
+
+    # Do NOT use fixed Coimbatore location
+    base_lat = None
+    base_lon = None
 
 
 # ============================================================
-# FIND CITY NAME FROM GPS
+# GET CITY / TOWN NAME FROM GPS
 # ============================================================
 
 @st.cache_data(ttl=300)
-def get_city_name(lat, lon):
+def get_location_name(latitude, longitude):
 
     try:
 
         url = "https://nominatim.openstreetmap.org/reverse"
 
         params = {
-            "lat": lat,
-            "lon": lon,
+            "lat": latitude,
+            "lon": longitude,
             "format": "json",
             "zoom": 10,
             "addressdetails": 1
@@ -225,24 +207,220 @@ def get_city_name(lat, lon):
                 or "Unknown Location"
             )
 
-            return city
+            district = (
+                address.get("state_district")
+                or address.get("county")
+                or ""
+            )
+
+            state = (
+                address.get("state")
+                or ""
+            )
+
+            return city, district, state
 
     except Exception:
-        return "Unknown Location"
+        pass
 
-    return "Unknown Location"
-
-
-city_name = get_city_name(base_lat, base_lon)
+    return "Unknown Location", "", ""
 
 
 # ============================================================
-# DISPLAY LOCATION
+# IF GPS IS AVAILABLE
 # ============================================================
 
-st.write("📍 Current Location:", city_name)
-st.write("Latitude:", base_lat)
-st.write("Longitude:", base_lon)
+if gps_available:
+
+    city_name, district_name, state_name = get_location_name(
+        base_lat,
+        base_lon
+    )
+
+else:
+
+    city_name = "Location not detected"
+    district_name = ""
+    state_name = ""
+
+
+# ============================================================
+# CURRENT LOCATION DISPLAY
+# ============================================================
+
+st.markdown(
+    f"""
+    <div style="
+        background-color:#142213;
+        padding:18px;
+        border-radius:12px;
+        border:1px solid #2e7d32;
+        margin-bottom:15px;
+    ">
+
+        <h3 style="color:#4CAF50;">
+            📍 Current Location
+        </h3>
+
+        <p style="color:white;font-size:18px;">
+            <b>City / Town:</b> {city_name}
+        </p>
+
+        <p style="color:white;">
+            <b>District:</b> {district_name}
+        </p>
+
+        <p style="color:white;">
+            <b>State:</b> {state_name}
+        </p>
+
+        <p style="color:white;">
+            <b>Latitude:</b>
+            {f"{base_lat:.6f}" if base_lat is not None else "Not available"}
+        </p>
+
+        <p style="color:white;">
+            <b>Longitude:</b>
+            {f"{base_lon:.6f}" if base_lon is not None else "Not available"}
+        </p>
+
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# ============================================================
+# GPS NOT AVAILABLE MESSAGE
+# ============================================================
+
+if not gps_available:
+
+    st.warning(
+        "📍 Current location is not available. "
+        "Please allow location permission in your browser."
+    )
+
+    st.info(
+        "After allowing location access, refresh the page."
+    )
+
+    st.stop()
+
+
+# ============================================================
+# SAFE NAVIGATION MAP
+# ============================================================
+
+st.subheader("🗺️ Real-Time Safe Navigation Map")
+
+
+# Create map using CURRENT GPS
+m = folium.Map(
+    location=[base_lat, base_lon],
+    zoom_start=14,
+    tiles="CartoDB dark_matter"
+)
+
+
+# ============================================================
+# CURRENT USER LOCATION MARKER
+# ============================================================
+
+folium.Marker(
+    [base_lat, base_lon],
+    popup=f"""
+    <b>📍 You are here</b><br>
+    {city_name}<br>
+    Latitude: {base_lat:.6f}<br>
+    Longitude: {base_lon:.6f}
+    """,
+    tooltip=f"📍 Current Location - {city_name}",
+    icon=folium.Icon(
+        color="green",
+        icon="home"
+    )
+).add_to(m)
+
+
+# ============================================================
+# SAFE ROUTE EXAMPLE
+# ============================================================
+
+# Example safe destination slightly away from current location
+safe_lat = base_lat + 0.005
+safe_lon = base_lon + 0.005
+
+
+folium.Marker(
+    [safe_lat, safe_lon],
+    popup="🟢 Safe Area",
+    tooltip="🟢 Safe Area",
+    icon=folium.Icon(
+        color="green",
+        icon="ok"
+    )
+).add_to(m)
+
+
+# Safe route line
+folium.PolyLine(
+    locations=[
+        [base_lat, base_lon],
+        [safe_lat, safe_lon]
+    ],
+    color="green",
+    weight=5,
+    opacity=0.8,
+    tooltip="Safe Route"
+).add_to(m)
+
+
+# ============================================================
+# DISPLAY MAP
+# ============================================================
+
+st_folium(
+    m,
+    width=900,
+    height=550
+)
+
+
+# ============================================================
+# LOCATION INFORMATION
+# ============================================================
+
+st.markdown("---")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric(
+        "📍 City",
+        city_name
+    )
+
+with col2:
+    st.metric(
+        "🌐 Latitude",
+        f"{base_lat:.6f}"
+    )
+
+with col3:
+    st.metric(
+        "🌐 Longitude",
+        f"{base_lon:.6f}"
+    )
+
+
+# ============================================================
+# LOCATION STATUS
+# ============================================================
+
+st.success(
+    f"📍 GPS detected successfully: {city_name}"
+)
 
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
