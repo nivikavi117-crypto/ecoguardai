@@ -90,7 +90,7 @@ def send_emergency_sms(alert_type, details, location="Grid 4B [11.0181, 76.9737]
 # --- APP LAYOUT & PRESENTATION LAYER ---
 
 st.title("🌲 EcoGuard AI: Forest Safety & Disaster Prediction")
-st.markdown(...)
+st.markdown("---")
 
 # Sidebar Application Selector Mode Switch
 view_mode = st.sidebar.radio("Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
