@@ -1,5 +1,5 @@
-from streamlit_js_eval import get_geolocation
 import streamlit as st
+import requests
 import folium
 from streamlit_folium import st_folium
 from streamlit_geolocation import streamlit_geolocation
