@@ -582,7 +582,7 @@ animal_status = st.selectbox(
             "Deer"
         ]
     )
-    st.markdown("---")
+st.markdown("---")
 
     if st.button(
         "🔄 Refresh Location & Weather",
