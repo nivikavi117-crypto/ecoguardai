@@ -572,7 +572,7 @@ st.markdown(
         "### 🐾 Animal Detection"
     )
 
-    animal_status = st.selectbox(
+animal_status = st.selectbox(
         "Simulate Camera Feed",
         [
             "No Animal",
