@@ -1,7 +1,8 @@
 streamlit
+requests
 folium
 streamlit-folium
+streamlit-geolocation
 plotly
 pillow
-streamlit-geolocation
 streamlit-js-eval
