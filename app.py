@@ -584,7 +584,7 @@ animal_status = st.selectbox(
     )
 st.markdown("---")
 
-    if st.button(
+if st.button(
         "🔄 Refresh Location & Weather",
         use_container_width=True
     ):
