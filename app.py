@@ -505,7 +505,7 @@ st.markdown(
         "### 🌦️ Live Telemetry"
     )
 
-    if temperature is not None:
+if temperature is not None:
 
         st.metric(
             "🌡️ Temperature",
