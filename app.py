@@ -488,19 +488,6 @@ with st.sidebar:
         "## 🌲 EcoGuard AI"
     )
 
-    st.markdown(
-        "### Select Interface View"
-    )
-
-    interface = st.radio(
-        "Interface",
-        [
-            "🏠 Citizen Mobile App",
-            "🛡️ Department Admin Dashboard"
-        ],
-        label_visibility="collapsed"
-    )
-
     st.markdown("---")
 
     st.markdown(
