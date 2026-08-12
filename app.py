@@ -481,19 +481,27 @@ fire_score, fire_risk = calculate_fire_risk(
 # ============================================================
 # SIDEBAR
 # ===========================================================
-   st.markdown(
-    "### Select Interface View"
-)
+   
+with st.sidebar:
 
-interface = st.radio(
-    "Interface",
-    [
-        "🏠 Citizen Mobile App",
-        "🛡️ Department Admin Dashboard"
-    ],
-    label_visibility="collapsed"
-)
-st.markdown("---")
+    st.markdown(
+        "## 🌲 EcoGuard AI"
+    )
+
+    st.markdown(
+        "### Select Interface View"
+    )
+
+    interface = st.radio(
+        "Interface",
+        [
+            "🏠 Citizen Mobile App",
+            "🛡️ Department Admin Dashboard"
+        ],
+        label_visibility="collapsed"
+    )
+
+    st.markdown("---")
 
     st.markdown(
         "### 📍 Current Location"
@@ -517,53 +525,68 @@ st.markdown("---")
         "### 🌦️ Live Telemetry"
     )
 
-if temperature is not None:
+    if temperature is not None:
 
         st.metric(
             "🌡️ Temperature",
             f"{temperature:.1f} °C"
         )
 
-else:
+    else:
 
         st.metric(
             "🌡️ Temperature",
             "N/A"
         )
 
-if humidity is not None:
+    if humidity is not None:
 
         st.metric(
             "💧 Humidity",
             f"{humidity:.0f} %"
         )
 
-else:
+    else:
 
         st.metric(
             "💧 Humidity",
             "N/A"
         )
 
-if wind_speed is not None:
+    if wind_speed is not None:
 
         st.metric(
             "💨 Wind Speed",
             f"{wind_speed:.1f} km/h"
         )
 
-else:
+    else:
 
         st.metric(
             "💨 Wind Speed",
             "N/A"
         )
 
-st.markdown("---")
+    st.markdown("---")
 
-st.markdown("---")
+    st.markdown(
+        "### 🐾 Animal Detection"
+    )
 
-if st.button(
+    animal_status = st.selectbox(
+        "Simulate Camera Feed",
+        [
+            "No Animal",
+            "Elephant",
+            "Leopard",
+            "Wild Boar",
+            "Deer"
+        ]
+    )
+
+    st.markdown("---")
+
+    if st.button(
         "🔄 Refresh Location & Weather",
         use_container_width=True
     ):
@@ -571,6 +594,7 @@ if st.button(
         st.cache_data.clear()
 
         st.rerun()
+
 
 
 # ============================================================
