@@ -250,8 +250,7 @@ if base_lat is None or base_lon is None:
 # GPS → CITY / DISTRICT / STATE
 # ============================================================
 
-@st.cache_data(ttl=300)
-def get_location_name(latitude, longitude):
+@def get_location_name(latitude, longitude):
 
     try:
         url = "https://nominatim.openstreetmap.org/reverse"
@@ -259,8 +258,8 @@ def get_location_name(latitude, longitude):
         params = {
             "lat": latitude,
             "lon": longitude,
-            "format": "json",
-            "zoom": 10,
+            "format": "jsonv2",
+            "zoom": 18,
             "addressdetails": 1
         }
 
@@ -272,37 +271,43 @@ def get_location_name(latitude, longitude):
             url,
             params=params,
             headers=headers,
-            timeout=10
+            timeout=15
         )
 
-        if response.status_code == 200:
+        data = response.json()
+        address = data.get("address", {})
 
-            data = response.json()
+        city = (
+            address.get("city")
+            or address.get("town")
+            or address.get("village")
+            or address.get("municipality")
+            or ""
+        )
 
-            address = data.get("address", {})
+        district = (
+            address.get("state_district")
+            or address.get("district")
+            or address.get("county")
+            or ""
+        )
 
-            city = (
-                address.get("city")
-                or address.get("town")
-                or address.get("municipality")
-                or address.get("village")
-                or "Unknown Location"
-            )
+        state = address.get("state", "")
 
-            district = (
-                address.get("state_district")
-                or address.get("district")
-                or address.get("county")
-                or address.get("municipality")
-                or ""
-            )
+        if not city:
+            city = "Unknown Location"
 
-            state = address.get("state", "")
+        if not district:
+            district = "District Not Found"
 
-            return city, district, state
+        if not state:
+            state = "State Not Found"
+
+        return city, district, state
 
     except Exception as e:
-        print("Location error:", e)
+        st.error(f"Location API Error: {e}")
+        return "Unknown Location", "District Not Found", "State Not Found"
 
     return "Unknown Location", "", ""
 
