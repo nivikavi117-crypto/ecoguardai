@@ -103,6 +103,17 @@ input_temp = 42
 input_hum = 12
 input_wind = 35
 selected_feed = "No Animal"
+# Simulated Environment Coordinates
+base_lat, base_lon = 11.0181, 76.9737
+village_coords = [11.0250, 11.9850]
+danger_coords = [11.0150, 76.9700]
+
+# Keep required variables without showing controls
+view_mode = "🛡️ Department Admin Dashboard"
+input_temp = 42
+input_hum = 12
+input_wind = 35
+selected_feed = "No Animal"
 import requests
 import folium
 from streamlit_folium import st_folium
