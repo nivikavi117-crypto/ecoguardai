@@ -92,20 +92,17 @@ def send_emergency_sms(alert_type, details, location="Grid 4B [11.0181, 76.9737]
 st.title("🌲 EcoGuard AI: Forest Safety & Disaster Prediction")
 st.markdown("---")
 
-# Sidebar Application Selector Mode Switch
-view_mode = st.sidebar.radio("Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
-
-# Simulated Environment Coordinates (Western Ghats, India Base Location)
+# Simulated Environment Coordinates
 base_lat, base_lon = 11.0181, 76.9737
 village_coords = [11.0250, 76.9850]
 danger_coords = [11.0150, 76.9700]
 
-# Global State Variables Simulation via sliders
-st.sidebar.markdown("### Live Telemetry Control")
-input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
-input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
-input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
-selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
+# Keep required variables without showing controls
+view_mode = "🏠 Citizen Mobile App App"
+input_temp = 42
+input_hum = 12
+input_wind = 35
+selected_feed = "No Animal"
 import streamlit as st
 import requests
 import folium
