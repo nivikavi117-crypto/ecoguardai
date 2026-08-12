@@ -101,9 +101,10 @@ village_coords = [11.0250, 76.9850]
 danger_coords = [11.0150, 76.9700]
 
 # Global State Variables Simulation via sliders
-live_temp = temperature if temperature is not None else 0[span_0](start_span)[span_0](end_span)
-live_hum = humidity if humidity is not None else 0[span_1](start_span)[span_1](end_span)
-live_wind = wind_speed if wind_speed is not None else 0[span_2](start_span)[span_2](end_span)
+st.markdown("### 🌦️ Live Telemetry")[span_89](start_span)[span_89](end_span)
+    st.metric("🌡️ Temperature", f"{temperature:.1f} °C" if temperature is not None else "N/A")[span_90](start_span)[span_90](end_span)
+    st.metric("💧 Humidity", f"{humidity:.0f} %" if humidity is not None else "N/A")[span_91](start_span)[span_91](end_span)
+    st.metric("💨 Wind Speed", f"{wind_speed:.1f} km/h" if wind_speed is not None else "N/A")[span_92](start_span)[span_92](end_span)
 import requests
 import folium
 from streamlit_folium import st_folium
