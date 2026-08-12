@@ -93,7 +93,6 @@ st.title("🌲 EcoGuard AI: Forest Safety & Disaster Prediction")
 st.markdown("---")
 
 # Sidebar Application Selector Mode Switch
-# Sidebar Application Selector Mode Switch
 view_mode = st.sidebar.radio("Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
 
 # Simulated Environment Coordinates (Western Ghats, India Base Location)
@@ -553,23 +552,6 @@ with st.sidebar:
             "💨 Wind Speed",
             "N/A"
         )
-
-    st.markdown("---")
-
-    st.markdown(
-        "### 🐾 Animal Detection"
-    )
-
-    animal_status = st.selectbox(
-        "Simulate Camera Feed",
-        [
-            "No Animal",
-            "Elephant",
-            "Leopard",
-            "Wild Boar",
-            "Deer"
-        ]
-    )
 
     st.markdown("---")
 
