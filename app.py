@@ -106,23 +106,44 @@ input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
-    import streamlit as st
-    js_geo = """
-    <script>
-    navigator.geolocation.getCurrentPosition(function(position) {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        window.parent.postMessage({type: 'streamlit:setComponentValue', value: {lat: lat, lon: lon}}, '*');
-    });
-    </script>
-    """
-    st.components.v1.html(js_geo, height=0)
-    
-    if 'gps_data' not in st.session_state:
-        st.session_state.gps_data = {"lat": 11.0181, "lon": 76.9558}
-        
-    base_lat = st.session_state.gps_data["lat"]
-    base_lon = st.session_state.gps_data["lon"]
+import streamlit as st
+import streamlit.components.v1 as components
+
+js_geo = """
+<script>
+navigator.geolocation.getCurrentPosition(function(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    window.parent.postMessage(
+        {
+            type: 'streamlit:setComponentValue',
+            value: {
+                lat: lat,
+                lon: lon
+            }
+        },
+        '*'
+    );
+});
+</script>
+"""
+
+components.html(js_geo, height=0)
+
+# Default GPS location
+if "gps_data" not in st.session_state:
+    st.session_state.gps_data = {
+        "lat": 11.0181,
+        "lon": 76.9558
+    }
+
+# Get latitude and longitude
+base_lat = st.session_state.gps_data["lat"]
+base_lon = st.session_state.gps_data["lon"]
+
+st.write("Latitude:", base_lat)
+st.write("Longitude:", base_lon)
 
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
