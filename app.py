@@ -106,12 +106,26 @@ input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
-import requests
-try:
-    geo_data = requests.get('https://ipapi.co', timeout=3).json()
-    base_lat, base_lon = geo_data.get('latitude', 11.0181), geo_data.get('longitude', 76.9737)
-except:
-    base_lat, base_lon = 11.0181, 76.9737
+import streamlit as st
+# Custom Javascript HTML5 component to fetch live browser coordinates
+js_geo = """
+<script>
+navigator.geolocation.getCurrentPosition(function(position) {
+const lat = position.coords.latitude;
+const lon = position.coords.longitude;
+window.parent.postMessage({type: 'streamlit:setComponentValue', value: {lat: lat, lon: lon}}, '*');
+     });
+        </script>
+        """
+        st.components.v1.html(js_geo, height=0)
+        
+# Session state memory-la browser GPS data-vah auto-lock pannum
+    if 'gps_data' not in st.session_state:
+    st.session_state.gps_data = {"lat": 11.0181, "lon": 76.9558}
+            
+    base_lat = st.session_state.gps_data["lat"]
+    base_lon = st.session_state.gps_data["lon"]
+
 
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
 img_feed, ai_label, ai_conf, animal_dist = run_mock_yolo(selected_feed)
