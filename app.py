@@ -254,7 +254,6 @@ if base_lat is None or base_lon is None:
 def get_location_name(latitude, longitude):
 
     try:
-
         url = "https://nominatim.openstreetmap.org/reverse"
 
         params = {
@@ -280,43 +279,37 @@ def get_location_name(latitude, longitude):
 
             data = response.json()
 
-            address = data.get(
-                "address",
-                {}
-            )
+            address = data.get("address", {})
 
             city = (
                 address.get("city")
                 or address.get("town")
                 or address.get("municipality")
                 or address.get("village")
-                or address.get("county")
                 or "Unknown Location"
             )
 
             district = (
-    address.get("state_district")
-    or address.get("district")
-    or address.get("county")
-    or address.get("municipality")
-    or ""
-)
+                address.get("state_district")
+                or address.get("district")
+                or address.get("county")
+                or address.get("municipality")
+                or ""
+            )
 
-state = address.get("state", "")
+            state = address.get("state", "")
 
             return city, district, state
 
-    except Exception:
-        pass
+    except Exception as e:
+        print("Location error:", e)
 
     return "Unknown Location", "", ""
-
 
 city_name, district_name, state_name = get_location_name(
     base_lat,
     base_lon
 )
-
 
 # ============================================================
 # LIVE WEATHER
