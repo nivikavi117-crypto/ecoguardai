@@ -248,51 +248,37 @@ else:
 # CURRENT LOCATION DISPLAY
 # ============================================================
 
-st.markdown(
-    f"""
-    <div style="
-        background-color:#142213;
-        padding:18px;
-        border-radius:12px;
-        border:1px solid #2e7d32;
-        margin-bottom:15px;
-    ">
+st.subheader("📍 Current Location")
 
-        <h3 style="color:#4CAF50;">
-            📍 Current Location
-        </h3>
+if gps_available:
 
-        <p style="color:white;font-size:18px;">
-            <b>City / Town:</b> {city_name}
-        </p>
+    st.success(f"📍 Current Location: {city_name}")
 
-        <p style="color:white;">
-            <b>District:</b> {district_name}
-        </p>
+    col1, col2 = st.columns(2)
 
-        <p style="color:white;">
-            <b>State:</b> {state_name}
-        </p>
+    with col1:
+        st.write(f"**City / Town:** {city_name}")
+        st.write(f"**District:** {district_name}")
+        st.write(f"**State:** {state_name}")
 
-        <p style="color:white;">
-            <b>Latitude:</b>
-            {f"{base_lat:.6f}" if base_lat is not None else "Not available"}
-        </p>
+    with col2:
+        st.write(f"**Latitude:** {base_lat:.6f}")
+        st.write(f"**Longitude:** {base_lon:.6f}")
 
-        <p style="color:white;">
-            <b>Longitude:</b>
-            {f"{base_lon:.6f}" if base_lon is not None else "Not available"}
-        </p>
+else:
 
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+    st.warning("📍 Location not detected")
 
+    st.info(
+        "Please allow location permission in your browser "
+        "and click the button below."
+    )
 
-# ============================================================
-# GPS NOT AVAILABLE MESSAGE
-# ============================================================
+    if st.button("🔄 Get My Current Location"):
+
+        st.rerun()
+
+    st.stop()
 
 if not gps_available:
 
