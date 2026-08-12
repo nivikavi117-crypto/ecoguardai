@@ -566,7 +566,22 @@ with st.sidebar:
             "💨 Wind Speed",
             "N/A"
         )
+st.markdown("---")
 
+    st.markdown(
+        "### 🐾 Animal Detection"
+    )
+
+    animal_status = st.selectbox(
+        "Simulate Camera Feed",
+        [
+            "No Animal",
+            "Elephant",
+            "Leopard",
+            "Wild Boar",
+            "Deer"
+        ]
+    )
     st.markdown("---")
 
     if st.button(
