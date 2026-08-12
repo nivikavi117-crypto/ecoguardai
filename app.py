@@ -93,6 +93,7 @@ st.title("🌲 EcoGuard AI: Forest Safety & Disaster Prediction")
 st.markdown("---")
 
 # Sidebar Application Selector Mode Switch
+# Sidebar Application Selector Mode Switch
 view_mode = st.sidebar.radio("Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
 
 # Simulated Environment Coordinates (Western Ghats, India Base Location)
@@ -101,11 +102,11 @@ village_coords = [11.0250, 76.9850]
 danger_coords = [11.0150, 76.9700]
 
 # Global State Variables Simulation via sliders
-st.markdown("### 🌦️ Live Telemetry")[span_89](start_span)[span_89](end_span)
-st.metric("🌡️ Temperature", f"{temperature:.1f} °C" if temperature is not None else "N/A")[span_90](start_span)[span_90](end_span)
-st.metric("💧 Humidity", f"{humidity:.0f} %" if humidity is not None else "N/A")[span_91](start_span)[span_91](end_span)
-st.metric("💨 Wind Speed", f"{wind_speed:.1f} km/h" if wind_speed is not None else "N/A")[span_92](start_span)[span_92](end_span)
-import requests
+st.sidebar.markdown("### Live Telemetry Control")
+input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
+input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
+input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
+selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])import requests
 import folium
 from streamlit_folium import st_folium
 from streamlit_geolocation import streamlit_geolocation
