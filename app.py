@@ -566,13 +566,14 @@ with st.sidebar:
             "💨 Wind Speed",
             "N/A"
         )
-st.markdown("---")
 
-st.markdown(
+    st.markdown("---")
+
+    st.markdown(
         "### 🐾 Animal Detection"
     )
 
-animal_status = st.selectbox(
+    animal_status = st.selectbox(
         "Simulate Camera Feed",
         [
             "No Animal",
@@ -582,9 +583,10 @@ animal_status = st.selectbox(
             "Deer"
         ]
     )
-st.markdown("---")
 
-if st.button(
+    st.markdown("---")
+
+    if st.button(
         "🔄 Refresh Location & Weather",
         use_container_width=True
     ):
@@ -592,8 +594,6 @@ if st.button(
         st.cache_data.clear()
 
         st.rerun()
-
-
 
 # ============================================================
 # MAIN TITLE
