@@ -114,7 +114,7 @@ from streamlit_geolocation import streamlit_geolocation
 
 
 # ============================================================
-# PAGE CONFIGURATION
+# PAGE CONFIG
 # ============================================================
 
 st.set_page_config(
@@ -137,16 +137,17 @@ st.markdown(
         color: white;
     }
 
-    h1, h2, h3 {
-        color: #4CAF50 !important;
+    .main-title {
+        color: #4CAF50;
+        font-size: 38px;
+        font-weight: bold;
     }
 
-    .weather-card {
-        background-color: #142213;
-        border: 1px solid #2e7d32;
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 12px;
+    .section-title {
+        color: #4CAF50;
+        font-size: 26px;
+        font-weight: bold;
+        margin-top: 15px;
     }
 
     .location-card {
@@ -157,12 +158,19 @@ st.markdown(
         margin-bottom: 15px;
     }
 
+    .weather-card {
+        background-color: #142213;
+        border: 1px solid #2e7d32;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+    }
+
     .risk-card {
         background-color: #24140d;
         border: 1px solid #ff5722;
         border-radius: 12px;
         padding: 18px;
-        margin-top: 15px;
     }
 
     </style>
@@ -172,16 +180,14 @@ st.markdown(
 
 
 # ============================================================
-# GET CURRENT DEVICE LOCATION
+# GET CURRENT DEVICE GPS LOCATION
 # ============================================================
 
-location = streamlit_geolocation(
-    key="current_gps"
-)
+location = streamlit_geolocation()
 
 
 # ============================================================
-# CHECK GPS
+# CHECK GPS LOCATION
 # ============================================================
 
 if (
@@ -198,21 +204,17 @@ if (
         "lon": base_lon
     }
 
-    gps_available = True
-
 else:
 
     base_lat = None
     base_lon = None
 
-    gps_available = False
-
 
 # ============================================================
-# STOP IF GPS NOT AVAILABLE
+# IF GPS NOT AVAILABLE
 # ============================================================
 
-if not gps_available:
+if base_lat is None or base_lon is None:
 
     st.title("🌲 EcoGuard AI")
 
@@ -221,10 +223,22 @@ if not gps_available:
     )
 
     st.info(
-        "Please allow location permission in your browser."
+        "Please allow Location permission in your browser."
     )
 
-    if st.button("🔄 Get My Current Location"):
+    st.markdown(
+        """
+        ### 📱 How to enable location
+
+        1. Click the 🔒 icon near the website address.
+        2. Find **Location**.
+        3. Select **Allow**.
+        4. Refresh the page.
+        5. EcoGuard AI will detect your current location.
+        """
+    )
+
+    if st.button("🔄 Try Again"):
 
         st.rerun()
 
@@ -266,7 +280,10 @@ def get_location_name(latitude, longitude):
 
             data = response.json()
 
-            address = data.get("address", {})
+            address = data.get(
+                "address",
+                {}
+            )
 
             city = (
                 address.get("city")
@@ -311,7 +328,9 @@ def get_live_weather(latitude, longitude):
 
     try:
 
-        weather_url = "https://api.open-meteo.com/v1/forecast"
+        weather_url = (
+            "https://api.open-meteo.com/v1/forecast"
+        )
 
         params = {
             "latitude": latitude,
@@ -334,7 +353,10 @@ def get_live_weather(latitude, longitude):
 
             data = response.json()
 
-            current = data.get("current", {})
+            current = data.get(
+                "current",
+                {}
+            )
 
             temperature = current.get(
                 "temperature_2m"
@@ -381,11 +403,14 @@ def calculate_fire_risk(
         or humidity is None
         or wind_speed is None
     ):
-        return 0, "Unknown"
+        return 0, "UNKNOWN"
 
     score = 0
 
-    # Temperature
+    # --------------------------------------------------------
+    # TEMPERATURE
+    # --------------------------------------------------------
+
     if temperature >= 40:
         score += 40
 
@@ -398,8 +423,10 @@ def calculate_fire_risk(
     elif temperature >= 25:
         score += 10
 
+    # --------------------------------------------------------
+    # HUMIDITY
+    # --------------------------------------------------------
 
-    # Humidity
     if humidity <= 20:
         score += 35
 
@@ -412,8 +439,10 @@ def calculate_fire_risk(
     elif humidity <= 50:
         score += 5
 
+    # --------------------------------------------------------
+    # WIND
+    # --------------------------------------------------------
 
-    # Wind
     if wind_speed >= 30:
         score += 25
 
@@ -426,9 +455,7 @@ def calculate_fire_risk(
     else:
         score += 5
 
-
     score = min(score, 100)
-
 
     if score >= 75:
         risk = "VERY HIGH"
@@ -441,7 +468,6 @@ def calculate_fire_risk(
 
     else:
         risk = "LOW"
-
 
     return score, risk
 
@@ -464,7 +490,22 @@ with st.sidebar:
     )
 
     st.markdown(
-        "### 📍 Live Location"
+        "### Select Interface View"
+    )
+
+    interface = st.radio(
+        "Interface",
+        [
+            "🏠 Citizen Mobile App",
+            "🛡️ Department Admin Dashboard"
+        ],
+        label_visibility="collapsed"
+    )
+
+    st.markdown("---")
+
+    st.markdown(
+        "### 📍 Current Location"
     )
 
     st.success(
@@ -485,59 +526,70 @@ with st.sidebar:
         "### 🌦️ Live Telemetry"
     )
 
-
-    # Temperature
     if temperature is not None:
 
         st.metric(
-            "🌡️ Temperature (°C)",
-            f"{temperature:.1f}"
+            "🌡️ Temperature",
+            f"{temperature:.1f} °C"
         )
 
     else:
 
         st.metric(
-            "🌡️ Temperature (°C)",
+            "🌡️ Temperature",
             "N/A"
         )
 
-
-    # Humidity
     if humidity is not None:
 
         st.metric(
-            "💧 Humidity (%)",
-            f"{humidity:.0f}"
+            "💧 Humidity",
+            f"{humidity:.0f} %"
         )
 
     else:
 
         st.metric(
-            "💧 Humidity (%)",
+            "💧 Humidity",
             "N/A"
         )
 
-
-    # Wind
     if wind_speed is not None:
 
         st.metric(
-            "💨 Wind Speed (km/h)",
-            f"{wind_speed:.1f}"
+            "💨 Wind Speed",
+            f"{wind_speed:.1f} km/h"
         )
 
     else:
 
         st.metric(
-            "💨 Wind Speed (km/h)",
+            "💨 Wind Speed",
             "N/A"
         )
 
+    st.markdown("---")
+
+    st.markdown(
+        "### 🐾 Animal Detection"
+    )
+
+    animal_status = st.selectbox(
+        "Simulate Camera Feed",
+        [
+            "No Animal",
+            "Elephant",
+            "Leopard",
+            "Wild Boar",
+            "Deer"
+        ]
+    )
 
     st.markdown("---")
 
     if st.button(
-        "🔄 Refresh Location & Weather"
+        "🔄 Refresh Location & Weather",
+        use_container_width=True
     ):
 
         st.cache_data.clear()
@@ -549,24 +601,32 @@ with st.sidebar:
 # MAIN TITLE
 # ============================================================
 
-st.title(
-    "🌲 EcoGuard AI"
+st.markdown(
+    '<div class="main-title">'
+    '🌲 EcoGuard AI: Forest Safety & Disaster Prediction'
+    '</div>',
+    unsafe_allow_html=True
 )
 
-st.subheader(
-    "📱 Citizen Safety & Forest Fire Monitoring"
-)
+st.markdown("---")
 
 
 # ============================================================
-# CURRENT LOCATION CARD
+# LOCATION DISPLAY
 # ============================================================
+
+st.markdown(
+    '<div class="section-title">'
+    '📍 Current Location'
+    '</div>',
+    unsafe_allow_html=True
+)
 
 st.markdown(
     f"""
     <div class="location-card">
 
-    <h3>📍 Current Location</h3>
+    <h3>📍 {city_name}</h3>
 
     <b>City / Town:</b> {city_name}<br><br>
 
@@ -588,15 +648,17 @@ st.markdown(
 # WEATHER SECTION
 # ============================================================
 
-st.subheader(
-    "🌦️ Live Local Weather"
+st.markdown(
+    '<div class="section-title">'
+    '🌦️ Live Local Weather'
+    '</div>',
+    unsafe_allow_html=True
 )
 
+col1, col2, col3 = st.columns(3)
 
-weather_col1, weather_col2, weather_col3 = st.columns(3)
 
-
-with weather_col1:
+with col1:
 
     st.markdown(
         '<div class="weather-card">',
@@ -623,7 +685,7 @@ with weather_col1:
     )
 
 
-with weather_col2:
+with col2:
 
     st.markdown(
         '<div class="weather-card">',
@@ -650,7 +712,7 @@ with weather_col2:
     )
 
 
-with weather_col3:
+with col3:
 
     st.markdown(
         '<div class="weather-card">',
@@ -681,10 +743,12 @@ with weather_col3:
 # FIRE RISK
 # ============================================================
 
-st.subheader(
-    "🔥 Local Forest Fire Risk"
+st.markdown(
+    '<div class="section-title">'
+    '🔥 Local Forest Fire Risk'
+    '</div>',
+    unsafe_allow_html=True
 )
-
 
 if fire_risk == "VERY HIGH":
 
@@ -718,15 +782,33 @@ else:
 
 
 # ============================================================
+# ANIMAL ALERT
+# ============================================================
+
+if animal_status != "No Animal":
+
+    st.warning(
+        f"🐾 {animal_status} detected near "
+        f"{city_name}! Please maintain a safe distance."
+    )
+
+
+# ============================================================
 # SAFE NAVIGATION MAP
 # ============================================================
 
-st.subheader(
-    "🗺️ Real-Time Safe Navigation Map"
+st.markdown(
+    '<div class="section-title">'
+    '🗺️ Real-Time Safe Navigation Map'
+    '</div>',
+    unsafe_allow_html=True
 )
 
 
-# Current location map
+# ============================================================
+# CREATE MAP USING CURRENT GPS
+# ============================================================
+
 m = folium.Map(
     location=[
         base_lat,
@@ -749,8 +831,8 @@ folium.Marker(
     popup=(
         f"<b>📍 You are here</b><br>"
         f"{city_name}<br>"
-        f"Lat: {base_lat:.6f}<br>"
-        f"Lon: {base_lon:.6f}"
+        f"Latitude: {base_lat:.6f}<br>"
+        f"Longitude: {base_lon:.6f}"
     ),
     tooltip=(
         f"📍 Current Location - {city_name}"
@@ -763,10 +845,13 @@ folium.Marker(
 
 
 # ============================================================
-# FIRE RISK CIRCLE
+# FIRE RISK ZONE
 # ============================================================
 
-if fire_risk in ["HIGH", "VERY HIGH"]:
+if fire_risk in [
+    "HIGH",
+    "VERY HIGH"
+]:
 
     folium.Circle(
         location=[
@@ -787,7 +872,7 @@ if fire_risk in ["HIGH", "VERY HIGH"]:
 
 
 # ============================================================
-# SAFE AREA
+# SAFE DESTINATION
 # ============================================================
 
 safe_lat = base_lat + 0.005
@@ -842,19 +927,74 @@ st_folium(
 
 
 # ============================================================
-# LOCATION + WEATHER SUMMARY
+# SAFETY STATUS
 # ============================================================
 
 st.markdown("---")
 
-st.subheader(
-    "📊 Current Area Summary"
+st.markdown(
+    '<div class="section-title">'
+    '🚨 Local Safety Status'
+    '</div>',
+    unsafe_allow_html=True
 )
 
-summary_col1, summary_col2, summary_col3, summary_col4 = st.columns(4)
+
+status1, status2 = st.columns(2)
 
 
-with summary_col1:
+with status1:
+
+    if fire_risk in [
+        "HIGH",
+        "VERY HIGH"
+    ]:
+
+        st.error(
+            "🚨 Fire threat is high. "
+            "Avoid nearby forest/fire-risk areas."
+        )
+
+    else:
+
+        st.success(
+            "🟢 No high fire-risk condition detected "
+            "from current weather data."
+        )
+
+
+with status2:
+
+    if animal_status != "No Animal":
+
+        st.warning(
+            f"🐾 {animal_status} alert active."
+        )
+
+    else:
+
+        st.success(
+            "🟢 No animal alert detected."
+        )
+
+
+# ============================================================
+# FINAL SUMMARY
+# ============================================================
+
+st.markdown("---")
+
+st.markdown(
+    '<div class="section-title">'
+    '📊 Current Area Summary'
+    '</div>',
+    unsafe_allow_html=True
+)
+
+summary1, summary2, summary3, summary4 = st.columns(4)
+
+
+with summary1:
 
     st.metric(
         "📍 Location",
@@ -862,7 +1002,7 @@ with summary_col1:
     )
 
 
-with summary_col2:
+with summary2:
 
     if temperature is not None:
 
@@ -879,7 +1019,7 @@ with summary_col2:
         )
 
 
-with summary_col3:
+with summary3:
 
     if humidity is not None:
 
@@ -896,7 +1036,7 @@ with summary_col3:
         )
 
 
-with summary_col4:
+with summary4:
 
     if wind_speed is not None:
 
@@ -920,7 +1060,7 @@ with summary_col4:
 st.markdown("---")
 
 st.caption(
-    "EcoGuard AI • Location-based Fire & Safety Monitoring"
+    "EcoGuard AI • Location-Based Forest Fire & Wildlife Safety System"
 )
 
 fire_risk_score = predict_fire_risk(input_temp, input_hum, input_wind)
