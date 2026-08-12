@@ -108,40 +108,139 @@ input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
 selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
 import streamlit as st
 import streamlit.components.v1 as components
+import requests
 
-js_geo = """
+# ============================================================
+# GET CURRENT DEVICE LOCATION
+# ============================================================
+
+location_html = """
 <script>
-navigator.geolocation.getCurrentPosition(function(position) {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
+navigator.geolocation.getCurrentPosition(
+    function(position) {
 
-    window.parent.postMessage(
-        {
-            type: 'streamlit:setComponentValue',
-            value: {
-                lat: lat,
-                lon: lon
-            }
-        },
-        '*'
-    );
-});
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        const data = {
+            lat: lat,
+            lon: lon
+        };
+
+        window.parent.postMessage(
+            {
+                type: "streamlit:setComponentValue",
+                value: data
+            },
+            "*"
+        );
+    },
+
+    function(error) {
+        console.log("Location error:", error);
+    },
+
+    {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    }
+);
 </script>
 """
 
-components.html(js_geo, height=0)
+components.html(location_html, height=0)
 
-# Default GPS location
+
+# ============================================================
+# LOCATION DATA
+# ============================================================
+
 if "gps_data" not in st.session_state:
     st.session_state.gps_data = {
-        "lat": 11.0181,
-        "lon": 76.9558
+        "lat": None,
+        "lon": None
     }
 
-# Get latitude and longitude
-base_lat = st.session_state.gps_data["lat"]
-base_lon = st.session_state.gps_data["lon"]
 
+# ============================================================
+# USE CURRENT GPS LOCATION
+# ============================================================
+
+# If GPS is available, use it
+if st.session_state.gps_data["lat"] is not None:
+
+    base_lat = st.session_state.gps_data["lat"]
+    base_lon = st.session_state.gps_data["lon"]
+
+else:
+
+    # Temporary fallback only when GPS is not available
+    base_lat = 11.0181
+    base_lon = 76.9558
+
+
+# ============================================================
+# FIND CITY NAME FROM GPS
+# ============================================================
+
+@st.cache_data(ttl=300)
+def get_city_name(lat, lon):
+
+    try:
+
+        url = "https://nominatim.openstreetmap.org/reverse"
+
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "format": "json",
+            "zoom": 10,
+            "addressdetails": 1
+        }
+
+        headers = {
+            "User-Agent": "EcoGuardAI/1.0"
+        }
+
+        response = requests.get(
+            url,
+            params=params,
+            headers=headers,
+            timeout=10
+        )
+
+        if response.status_code == 200:
+
+            data = response.json()
+
+            address = data.get("address", {})
+
+            city = (
+                address.get("city")
+                or address.get("town")
+                or address.get("municipality")
+                or address.get("village")
+                or address.get("county")
+                or "Unknown Location"
+            )
+
+            return city
+
+    except Exception:
+        return "Unknown Location"
+
+    return "Unknown Location"
+
+
+city_name = get_city_name(base_lat, base_lon)
+
+
+# ============================================================
+# DISPLAY LOCATION
+# ============================================================
+
+st.write("📍 Current Location:", city_name)
 st.write("Latitude:", base_lat)
 st.write("Longitude:", base_lon)
 
