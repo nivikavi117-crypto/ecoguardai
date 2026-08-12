@@ -106,7 +106,8 @@ st.sidebar.markdown("### Live Telemetry Control")
 input_temp = st.sidebar.slider("Temperature (°C)", 15, 50, 42)
 input_hum = st.sidebar.slider("Humidity (%)", 5, 95, 12)
 input_wind = st.sidebar.slider("Wind Speed (km/h)", 0, 60, 35)
-selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])import requests
+selected_feed = st.sidebar.selectbox("Simulate Camera Feed:", ["No Animal", "Elephant", "Tiger"])
+import requests
 import folium
 from streamlit_folium import st_folium
 from streamlit_geolocation import streamlit_geolocation
