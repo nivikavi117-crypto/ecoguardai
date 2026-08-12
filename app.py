@@ -295,15 +295,14 @@ def get_location_name(latitude, longitude):
             )
 
             district = (
-                address.get("state_district")
-                or address.get("county")
-                or ""
-            )
+    address.get("state_district")
+    or address.get("district")
+    or address.get("county")
+    or address.get("municipality")
+    or ""
+)
 
-            state = (
-                address.get("state")
-                or ""
-            )
+state = address.get("state", "")
 
             return city, district, state
 
