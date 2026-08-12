@@ -250,66 +250,68 @@ if base_lat is None or base_lon is None:
 # GPS → CITY / DISTRICT / STATE
 # ============================================================
 
+@st.cache_data(ttl=300)
 def get_location_name(latitude, longitude):
 
     try:
-        url = "https://nominatim.openstreetmap.org/reverse"
-
-        params = {
-            "lat": latitude,
-            "lon": longitude,
-            "format": "jsonv2",
-            "zoom": 18,
-            "addressdetails": 1
-        }
-
-        headers = {
-            "User-Agent": "EcoGuardAI/1.0"
-        }
+        url = "https://api.bigdatacloud.net/data/reverse-geocode-client"
 
         response = requests.get(
             url,
-            params=params,
-            headers=headers,
+            params={
+                "latitude": latitude,
+                "longitude": longitude,
+                "localityLanguage": "en"
+            },
             timeout=15
         )
 
+        response.raise_for_status()
         data = response.json()
-        address = data.get("address", {})
 
+        # CITY / TOWN
         city = (
-            address.get("city")
-            or address.get("town")
-            or address.get("village")
-            or address.get("municipality")
-            or ""
+            data.get("city")
+            or data.get("locality")
+            or data.get("principalSubdivision")
+            or "Unknown Location"
         )
 
-        district = (
-            address.get("state_district")
-            or address.get("district")
-            or address.get("county")
-            or ""
+        # STATE
+        state = data.get(
+            "principalSubdivision",
+            "State Not Found"
         )
 
-        state = address.get("state", "")
+        # DISTRICT
+        district = "District Not Found"
 
-        if not city:
-            city = "Unknown Location"
+        admin_list = data.get(
+            "localityInfo", {}
+        ).get(
+            "administrative", []
+        )
 
-        if not district:
-            district = "District Not Found"
+        for item in admin_list:
+            name = item.get("name", "")
+            description = item.get(
+                "description", ""
+            ).lower()
 
-        if not state:
-            state = "State Not Found"
+            if "district" in description:
+                district = name
+                break
 
         return city, district, state
 
     except Exception as e:
-        st.error(f"Location API Error: {e}")
-        return "Unknown Location", "District Not Found", "State Not Found"
+        st.error(f"Location Error: {e}")
 
-    return "Unknown Location", "", ""
+        return (
+            "Unknown Location",
+            "District Not Found",
+            "State Not Found"
+        )
 
 city_name, district_name, state_name = get_location_name(
     base_lat,
