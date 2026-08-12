@@ -568,7 +568,7 @@ with st.sidebar:
         )
 st.markdown("---")
 
-    st.markdown(
+st.markdown(
         "### 🐾 Animal Detection"
     )
 
