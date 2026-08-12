@@ -93,7 +93,7 @@ st.title("🌲 EcoGuard AI: Forest Safety & Disaster Prediction")
 st.markdown(...)
 
 # Sidebar Application Selector Mode Switch
-view_mode = st.sidebar.radio.EcoGuardAI.("Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
+view_mode = st.sidebar.radio("## 🌲 EcoGuard AI","Select Interface View:", ["🏠 Citizen Mobile App App", "🛡️ Department Admin Dashboard"])
 
 # Simulated Environment Coordinates (Western Ghats, India Base Location)
 base_lat, base_lon = 11.0181, 76.9737
