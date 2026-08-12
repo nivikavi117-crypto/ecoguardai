@@ -491,27 +491,27 @@ interface = st.radio(
     ],
     label_visibility="collapsed"
 )
-st.markdown("---")
+    st.markdown("---")
 
-st.markdown(
+    st.markdown(
         "### 📍 Current Location"
     )
 
-st.success(
+    st.success(
         city_name
     )
 
-st.write(
+    st.write(
         f"Latitude: {base_lat:.6f}"
     )
 
-st.write(
+    st.write(
         f"Longitude: {base_lon:.6f}"
     )
 
-st.markdown("---")
+    st.markdown("---")
 
-st.markdown(
+    st.markdown(
         "### 🌦️ Live Telemetry"
     )
 
