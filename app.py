@@ -512,35 +512,35 @@ if temperature is not None:
             f"{temperature:.1f} °C"
         )
 
-    else:
+else:
 
         st.metric(
             "🌡️ Temperature",
             "N/A"
         )
 
-    if humidity is not None:
+if humidity is not None:
 
         st.metric(
             "💧 Humidity",
             f"{humidity:.0f} %"
         )
 
-    else:
+else:
 
         st.metric(
             "💧 Humidity",
             "N/A"
         )
 
-    if wind_speed is not None:
+if wind_speed is not None:
 
         st.metric(
             "💨 Wind Speed",
             f"{wind_speed:.1f} km/h"
         )
 
-    else:
+else:
 
         st.metric(
             "💨 Wind Speed",
@@ -551,7 +551,7 @@ if temperature is not None:
 
     st.markdown("---")
 
-    if st.button(
+if st.button(
         "🔄 Refresh Location & Weather",
         use_container_width=True
     ):
