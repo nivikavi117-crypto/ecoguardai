@@ -98,7 +98,7 @@ village_coords = [11.0250, 76.9850]
 danger_coords = [11.0150, 76.9700]
 
 # Keep required variables without showing controls
-view_mode = "🏠 Citizen Mobile App App","🛡️ Department Admin Dashboard"
+view_mode = "🏠 Citizen Mobile App App"
 input_temp = 42
 input_hum = 12
 input_wind = 35
